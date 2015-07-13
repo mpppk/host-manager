@@ -1,0 +1,25 @@
+web:
+  build: .
+  command: node ./src/js/index.js
+  # command: node src/js/index.js
+  links:
+    - redis
+  ports:
+    - "3000:3000"
+
+redis:
+  image: redis:latest
+
+# rediscommander:
+#   # image: elsdoerfer/redis-commander
+#   image: mpppk/redis-commander
+#   # command: redis-commander --redis-host ${REDIS_PORT_6379_TCP_ADDR}
+#   ports:
+#     - 8081:8081
+#   links:
+#     - redis
+
+# rediscli:
+#   image: relateiq/redis-cli
+#   links:
+#     - redis

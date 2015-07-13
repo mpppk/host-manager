@@ -1,0 +1,36 @@
+{
+    "version": "1.5.0-beta",
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "outDir": "src/js"
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "./**/*.tsx",
+        "!./node_modules/**/*"
+    ],
+    "files": [
+        "./src/ts/hello-world-router.ts",
+        "./src/ts/hostMapper.ts",
+        "./src/ts/hostRouter.ts",
+        "./src/ts/index.ts",
+        "./src/ts/test.ts",
+        "./typings/express/express.d.ts",
+        "./typings/mime/mime.d.ts",
+        "./typings/node/node.d.ts",
+        "./typings/redis/redis.d.ts",
+        "./typings/serve-static/serve-static.d.ts",
+        "./typings/tsd.d.ts"
+    ]
+}

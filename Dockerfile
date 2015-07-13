@@ -1,0 +1,1 @@
+FROM mpppk/node-cedar
