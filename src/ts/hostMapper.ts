@@ -1,5 +1,24 @@
 import redis = require("redis");
 
+// URLに関する情報を持つクラス
+class URLData{
+  private _url: string;
+  get url(){ return this._url; }
+
+  private _title: string;
+  get title(){ return this._title; }
+
+  // 同じタイトルを持つURLの中での序列
+  private _no: number;
+  get no(){ return this._no; }
+}
+
+// ホストに関する情報を持つクラス
+class HostData{
+  private _name: string;
+  get name(){ return this._name; }
+}
+
 class HostMapper {
     private _client : redis.RedisClient;
     get client(){ return this._client; }
