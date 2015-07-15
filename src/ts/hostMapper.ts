@@ -34,7 +34,7 @@ class HostMapper {
     }
 
     private setUrl(url: string, title: string, no: number): void{
-        const hostName: string = this.getHostName(url);
+        const hostName: string = HostMapper.getHostName(url);
         // Setに追加
         this.client.sadd("urlsTitle:" + title, url);
 
@@ -56,7 +56,7 @@ class HostMapper {
       });
     }
 
-    getHostName(url): string{
+    static getHostName(url): string{
       let hostName = url;
       hostName = hostName.replace("https://", "");
       hostName = hostName.replace("http://", "");
