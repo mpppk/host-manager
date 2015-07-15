@@ -2,14 +2,11 @@ import redis = require("redis");
 
 // URLに関する情報を持つクラス
 class URLData{
-  private _url: string;
+  constructor(private _url: string, private _title: string, private _no: number){}
+
   get url(){ return this._url; }
-
-  private _title: string;
   get title(){ return this._title; }
-
   // 同じタイトルを持つURLの中での序列
-  private _no: number;
   get no(){ return this._no; }
 }
 
