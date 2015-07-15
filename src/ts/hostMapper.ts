@@ -24,25 +24,23 @@ class HostMapper {
       this._client = redis.createClient(port, host);
     }
 
-    setUrls(urls: string[], title: string): void{
-      for (var i in urls) {
-        this.setUrl(urls[i], title, i);
-      }
+    addUrls(urls: string[], title: string): void{
+      for (var i in urls) { this.addUrl(new URLData(urls[i], title, i)); }
     }
 
-    private setUrl(url: string, title: string, no: number): void{
-        const hostName: string = HostMapper.getHostName(url);
-        // Setに追加
-        this.client.sadd("urlsTitle:" + title, url);
+    private addUrl(data: URLData): void{
+      const hostName: string = HostMapper.getHostName(data.url);
+      // Setに追加
+      this.client.sadd("urlsTitle:" + data.title, data.url);
 
-        // 各URLに関する情報を格納
-        this.client.hset("urlInfo:" + url, "title", title);
-        this.client.hset("urlInfo:" + url, "no", no);
+      // 各URLに関する情報を格納
+      this.client.hset("urlInfo:" + data.url, "title", data.title);
+      this.client.hset("urlInfo:" + data.url, "no", data.no);
 
-        // 各ホストに関する情報を格納
-        // 日付
-        const date = new Date();
-        this.client.zadd("lastAccessTime", date.getTime(), hostName);
+      // 各ホストに関する情報を格納
+      // 日付
+      const date = new Date();
+      this.client.zadd("lastAccessTime", date.getTime(), hostName);
     }
 
     getUrls() {
