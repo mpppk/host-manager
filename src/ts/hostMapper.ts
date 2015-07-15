@@ -51,6 +51,13 @@ class HostMapper {
       });
     }
 
+    getUrl(): void{
+      this.client.zrevrangebyscore("lastAccessTime", "+inf", "-inf", "withscores", (err, data)=> {
+          if (err){ return console.log(err); }
+          console.log(data);
+      });
+    }
+
     static getHostName(url): string{
       let hostName = url;
       hostName = hostName.replace("https://", "");

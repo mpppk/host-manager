@@ -25,6 +25,7 @@
         "./src/ts/hostMapper.ts",
         "./src/ts/hostRouter.ts",
         "./src/ts/index.ts",
+        "./typings/body-parser/body-parser.d.ts",
         "./typings/express/express.d.ts",
         "./typings/mime/mime.d.ts",
         "./typings/node/node.d.ts",

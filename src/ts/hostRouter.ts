@@ -1,7 +1,9 @@
 import express = require("express");
-import HostMapper = require("hostMapper");
+import HostMapper = require("./hostMapper");
+import bodyParser = require("body-parser");
+/*hostManager.router.use(bodyParser.json());*/
 
-class HostRouterBuilder{
+export class HostRouterBuilder{
   private hostMapper: HostMapper;
   private router: express.Router;
 
@@ -11,19 +13,22 @@ class HostRouterBuilder{
   }
 
   getHostRouter(): express.Router{
+    this.router.use(bodyParser.json());
     this.router.route("/")
       .get((req, res) => {
         this.hostMapper.getUrls();
         res.send("look console.");
       })
       .post((req, res) => {
+        console.log("in getHostRouter post");
+        console.log(req.body);
         // titleを取得してhashに追加
         const title = req.body.title || "no_title";
 
         //urlが格納されているプロパティを探す. *_urlsというkeyで格納されている前提
         const urls = this.findUrlsFromRequest(req, "urls");
 
-        this.hostMapper.setUrls(urls, title);
+        this.hostMapper.addUrls(urls, title);
         res.json(req.body);
       });
     return this.router;
@@ -36,5 +41,4 @@ class HostRouterBuilder{
       }
     }
   }
-
 }
