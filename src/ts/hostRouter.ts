@@ -16,7 +16,7 @@ export class HostRouterBuilder{
     this.router.use(bodyParser.json());
     this.router.route("/")
       .get((req, res) => {
-        this.hostMapper.getUrls();
+        this.hostMapper.getUrl();
         res.send("look console.");
       })
       .post((req, res) => {

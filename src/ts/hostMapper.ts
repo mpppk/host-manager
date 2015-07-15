@@ -10,6 +10,28 @@ class URLData{
   get no(){ return this._no; }
 }
 
+class URLDetail extends URLData{
+  private _remainWaitTime: number;
+  get remainWaitTime(){ return this._remainWaitTime; }
+
+  private _hostName: string;
+  get hostName(){ return this._hostName; }
+
+  constructor(_url: string, _title: string, _no: number, private _lastAccessTime: number){
+    super(_url, _title, _no);
+    this._hostName       = HostMapper.getHostName(_url);
+    this._remainWaitTime = this.getCurrentUnixTime() - _lastAccessTime;
+  }
+
+  getCurrentUnixTime(): number{
+    const now = new Date();
+    //[now]に対して[getTime()]を実行し、[msNow]にミリ秒単位のUNIX TIMESTAMPを代入する
+    const msNow = now.getTime();
+    //[msNow]を1,000で割り、秒単位のUNIX TIMESTAMPを求める
+    return Math.floor( msNow / 1000 );
+  }
+}
+
 // ホストに関する情報を持つクラス
 class HostData{
   private _name: string;
@@ -43,18 +65,13 @@ class HostMapper {
       this.client.zadd("lastAccessTime", date.getTime(), hostName);
     }
 
-    getUrls() {
-      this.client.zrevrangebyscore("lastAccessTime", "+inf", "-inf", "withscores", (err, data)=> {
-          if (err){ return console.log(err); }
-          console.log("most short last access time:");
-          console.log(data);
-      });
-    }
-
     getUrl(): void{
       this.client.zrevrangebyscore("lastAccessTime", "+inf", "-inf", "withscores", (err, data)=> {
           if (err){ return console.log(err); }
-          console.log(data);
+          var url: string = data[0];
+          var time: string = data[1];
+          console.log(url);
+          console.log(time);
       });
     }
 
