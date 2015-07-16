@@ -69,6 +69,7 @@ class HostMapper {
       // 各URLに関する情報を格納
       this.client.hset("urlInfo:" + data.url, "title", data.title);
       this.client.hset("urlInfo:" + data.url, "no", data.no);
+      this.client.incr("urlsMax");
 
       // 各ホストに関する情報を格納
       // 日付
@@ -117,6 +118,7 @@ class HostMapper {
     removeUrl(urlDetail: URLDetail): void{
       // 各URLに関する情報を削除
       this.client.del("urlInfo:" + urlDetail.url);
+      this.client.decr("urlsMax");
 
       // 各ホストに関する情報を格納
       this.client.srem("urlsOfHost:" + urlDetail.hostName, urlDetail.url);
@@ -126,6 +128,12 @@ class HostMapper {
       this.getUrl((data)=>{
         this.removeUrl(data);
         callback(data);
+      });
+    }
+
+    hasUrl(callback: (hasUrl:boolean)=>void): void{
+      this.client.get("urlsMax", (err, data) => {
+        callback(data != "0" && data != null);
       });
     }
 

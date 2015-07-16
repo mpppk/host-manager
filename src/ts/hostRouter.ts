@@ -16,15 +16,22 @@ export class HostRouterBuilder{
     this.router.use(bodyParser.json());
     this.router.route("/")
       .get((req, res) => {
-        if (req.query.pop === "1") {
-          this.hostMapper.popUrl((data)=>{
-            res.send(data);
-          });
-        }else{
-          this.hostMapper.getUrl((data)=>{
-            res.send(data);
-          });
-        }
+        // 取り出すものがある場合のみ処理を行う
+        this.hostMapper.hasUrl((hasUrl)=>{
+          if(hasUrl){
+            if (req.query.pop === "1") {
+              this.hostMapper.popUrl((data)=>{
+                res.send(data);
+              });
+            }else{
+              this.hostMapper.getUrl((data)=>{
+                res.send(data);
+              });
+            }
+          }else{
+            res.send("{title:\"nothing\"}");
+          }
+        });
       })
       .post((req, res) => {
         console.log(req.body);
