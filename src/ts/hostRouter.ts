@@ -16,12 +16,17 @@ export class HostRouterBuilder{
     this.router.use(bodyParser.json());
     this.router.route("/")
       .get((req, res) => {
-        this.hostMapper.getUrl((data)=>{
-          res.send(data);
-        });
+        if (req.query.pop === "1") {
+          this.hostMapper.popUrl((data)=>{
+            res.send(data);
+          });
+        }else{
+          this.hostMapper.getUrl((data)=>{
+            res.send(data);
+          });
+        }
       })
       .post((req, res) => {
-        console.log("in getHostRouter post");
         console.log(req.body);
         // titleを取得してhashに追加
         const title = req.body.title || "no_title";

@@ -65,8 +65,6 @@ class HostMapper {
 
     private addUrl(data: URLData): void{
       const hostName: string = HostMapper.getHostName(data.url);
-      // Setに追加
-      this.client.sadd("urlsTitle:" + data.title, data.url);
 
       // 各URLに関する情報を格納
       this.client.hset("urlInfo:" + data.url, "title", data.title);
@@ -91,6 +89,10 @@ class HostMapper {
         host = data[0];
         time = data[1];
 
+        // lastAccessTimeを更新
+        const date = new Date();
+        this.client.zadd("lastAccessTime", date.getTime(), host);
+
         this.client.srandmember("urlsOfHost:" + host, (err, data) =>{
           if (err){ return console.log(err); }
           url = data;
@@ -109,6 +111,21 @@ class HostMapper {
             });
           });
         });
+      });
+    }
+
+    removeUrl(urlDetail: URLDetail): void{
+      // 各URLに関する情報を削除
+      this.client.del("urlInfo:" + urlDetail.url);
+
+      // 各ホストに関する情報を格納
+      this.client.srem("urlsOfHost:" + urlDetail.hostName, urlDetail.url);
+    }
+
+    popUrl(callback: (data:URLDetail)=>void): void{
+      this.getUrl((data)=>{
+        this.removeUrl(data);
+        callback(data);
       });
     }
 
