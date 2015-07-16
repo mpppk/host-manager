@@ -11,24 +11,37 @@ class URLData{
 }
 
 class URLDetail extends URLData{
-  private _remainWaitTime: number;
-  get remainWaitTime(){ return this._remainWaitTime; }
+  get lastAccessTime(){ return this._lastAccessTime; }
+
+  get remainWaitTime(){
+    var time: number = URLDetail.getCurrentUnixTime() - this.lastAccessTime;
+    return time;
+  }
 
   private _hostName: string;
   get hostName(){ return this._hostName; }
 
   constructor(_url: string, _title: string, _no: number, private _lastAccessTime: number){
     super(_url, _title, _no);
-    this._hostName       = HostMapper.getHostName(_url);
-    this._remainWaitTime = this.getCurrentUnixTime() - _lastAccessTime;
+    this._hostName = HostMapper.getHostName(_url);
   }
 
-  getCurrentUnixTime(): number{
+  static getCurrentUnixTime(): number{
     const now = new Date();
     //[now]に対して[getTime()]を実行し、[msNow]にミリ秒単位のUNIX TIMESTAMPを代入する
     const msNow = now.getTime();
     //[msNow]を1,000で割り、秒単位のUNIX TIMESTAMPを求める
     return Math.floor( msNow / 1000 );
+  }
+
+  toString(): string{
+    let str: string = "-- DataDetail --";
+    str += "url: " + this.url + "\n";
+    str += "title: " + this.title + "\n";
+    str += "no: " + this.no + "\n";
+    str += "lastAccessTime: " + this.lastAccessTime + "\n";
+    str += "remainWaitTime: " + this.remainWaitTime + "\n";
+    return str;
   }
 }
 
@@ -63,15 +76,39 @@ class HostMapper {
       // 日付
       const date = new Date();
       this.client.zadd("lastAccessTime", date.getTime(), hostName);
+      this.client.sadd("urlsOfHost:" + hostName, data.url);
     }
 
-    getUrl(): void{
+    getUrl(callback: (data: URLDetail)=>void): void{
+      var host: string;
+      var url: string;
+      var time: number;
+      var title: string;
+      var no: number;
+
       this.client.zrevrangebyscore("lastAccessTime", "+inf", "-inf", "withscores", (err, data)=> {
+        if (err){ return console.log(err); }
+        host = data[0];
+        time = data[1];
+
+        this.client.srandmember("urlsOfHost:" + host, (err, data) =>{
           if (err){ return console.log(err); }
-          var url: string = data[0];
-          var time: string = data[1];
-          console.log(url);
-          console.log(time);
+          url = data;
+
+          this.client.hget("urlInfo:" + url, "title", (err, data) =>{
+            if (err){ return console.log(err); }
+            title = data;
+
+            this.client.hget("urlInfo:" + url, "no", (err, data) =>{
+              if (err){ return console.log(err); }
+              no = data;
+
+              let urlDetail: URLDetail = new URLDetail(url, title, no, time);
+              console.log(urlDetail.toString());
+              callback(urlDetail);
+            });
+          });
+        });
       });
     }
 
@@ -82,7 +119,6 @@ class HostMapper {
       hostName = hostName.split("/")[0];
       return hostName;
     }
-
 }
 
 export = HostMapper;
