@@ -42,6 +42,18 @@ class URLDetail extends URLData{
     str += "remainWaitTime: " + this.remainWaitTime + "\n";
     return str;
   }
+
+  toObject(){
+    var obj = {
+      lastAccessTime: this.lastAccessTime,
+      remainWaitTime: this.remainWaitTime,
+      waitTime: URLDetail.waitTime,
+      url: this.url,
+      title: this.title,
+      no: this.no
+    }
+    return obj;
+  }
 }
 
 // ホストに関する情報を持つクラス

@@ -21,11 +21,11 @@ export class HostRouterBuilder{
           if(hasUrl){
             if (req.query.pop === "1") {
               this.hostMapper.popUrl((data)=>{
-                res.send(data);
+                res.send(data.toObject());
               });
             }else{
               this.hostMapper.getUrl((data)=>{
-                res.send(data);
+                res.send(data.toObject());
               });
             }
           }else{
