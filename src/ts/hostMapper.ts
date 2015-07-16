@@ -11,11 +11,13 @@ class URLData{
 }
 
 class URLDetail extends URLData{
-  get lastAccessTime(){ return this._lastAccessTime; }
+  static waitTime: number = 2000;
 
-  get remainWaitTime(){
-    var time: number = URLDetail.getCurrentUnixTime() - this.lastAccessTime;
-    return time;
+  get lastAccessTime(): number{ return this._lastAccessTime; }
+
+  get remainWaitTime(): number{
+    var time: number = this.lastAccessTime + URLDetail.waitTime - URLDetail.getCurrentUnixTime();
+    return (time > 0)? time:0;
   }
 
   private _hostName: string;
@@ -28,10 +30,7 @@ class URLDetail extends URLData{
 
   static getCurrentUnixTime(): number{
     const now = new Date();
-    //[now]に対して[getTime()]を実行し、[msNow]にミリ秒単位のUNIX TIMESTAMPを代入する
-    const msNow = now.getTime();
-    //[msNow]を1,000で割り、秒単位のUNIX TIMESTAMPを求める
-    return Math.floor( msNow / 1000 );
+    return now.getTime();
   }
 
   toString(): string{
@@ -85,10 +84,10 @@ class HostMapper {
       var title: string;
       var no: number;
 
-      this.client.zrevrangebyscore("lastAccessTime", "+inf", "-inf", "withscores", (err, data)=> {
+      this.client.zrevrangebyscore("lastAccessTime", "+inf", "-inf", "withscores", (err, data: string[])=> {
         if (err){ return console.log(err); }
         host = data[0];
-        time = data[1];
+        time = parseInt(data[1]);
 
         // lastAccessTimeを更新
         const date = new Date();
