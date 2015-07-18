@@ -38,8 +38,11 @@ export class HostRouterBuilder{
         // titleを取得してhashに追加
         const title = req.body.title || "no_title";
 
+        var body = req.body;
+        if("collection1" in req.body){ body = this.modifyKimono(req.body); }
+
         //urlが格納されているプロパティを探す. *_urlsというkeyで格納されている前提
-        const urls = this.findUrlsFromRequest(req, "urls");
+        const urls = this.findUrlsFromRequest(body, "urls");
 
         this.hostMapper.addUrls(urls, title);
         res.json(req.body);
@@ -47,10 +50,19 @@ export class HostRouterBuilder{
     return this.router;
   }
 
-  private findUrlsFromRequest(req, searchWord: string): string[]{
-    for (var key in req.body) {
+  private modifyKimono(kimono){
+    var body = {urls: []};
+    var collection = kimono.results.collection1;
+    for(var c of collection){
+      body.urls.push(c.src);
+    }
+    return body;
+  }
+
+  private findUrlsFromRequest(body, searchWord: string): string[]{
+    for (var key in body) {
       if (key.indexOf(searchWord) != -1) {
-        return req.body[key];
+        return body[key];
       }
     }
   }
